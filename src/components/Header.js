@@ -1,5 +1,6 @@
 // src/components/Header.js
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../images/argano-logo.png"; // Make sure the logo is placed in src/images/
 
 const headerStyle = {
@@ -12,13 +13,27 @@ const headerStyle = {
 };
 
 const logoStyle = {
-  height: "40px"
+  height: "40px",
+  cursor: "pointer",
+  userSelect: "none"
 };
 
 export default function Header() {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    const empId = localStorage.getItem("loggedInEmpId");
+    navigate(empId ? "/dashboard" : "/");
+  };
+
   return (
     <div style={headerStyle}>
-      <img src={logo} alt="Argano Logo" style={logoStyle} />
+      <img
+        src={logo}
+        alt="Argano Logo"
+        style={logoStyle}
+        onClick={handleLogoClick}
+      />
     </div>
   );
 }

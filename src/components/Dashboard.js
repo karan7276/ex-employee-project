@@ -96,7 +96,16 @@ export default function Dashboard() {
         <>
             {/* ✅ Top bar with logo, center info, and logout */}
             <div style={styles.topBar}>
-                <img src={logo} alt="Argano Logo" style={styles.logo} />
+                <img
+                    src={logo}
+                    alt="Argano Logo"
+                    style={{ ...styles.logo, cursor: "pointer" }}
+                    onClick={() => {
+                        const empId = localStorage.getItem("loggedInEmpId");
+                        navigate(empId ? "/dashboard" : "/");
+                    }}
+                />
+
                 <div style={styles.centerInfo}>
                     TALLAM MOHAN KRISHNA ({empId}) | {currentDateStr}
                 </div>
@@ -108,7 +117,7 @@ export default function Dashboard() {
             {/* ✅ Main dashboard content */}
             <div style={styles.container}>
                 <div style={styles.centerContent}>
-                    <h2 style={styles.welcome}>👋 Welcome to the Re-connect Portal</h2>
+                    <h2 style={styles.welcome}>👋 Welcome to the ConnectBack Portal</h2>
                     <p style={styles.subtext}>We’re glad to have you here!</p>
                 </div>
             </div>
