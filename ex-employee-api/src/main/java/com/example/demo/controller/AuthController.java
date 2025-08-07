@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.SignupRequest;
 import com.example.demo.service.UserService;
 
@@ -30,5 +32,15 @@ public class AuthController {
         boolean verified = userService.verifyOtp(email, otp);
         return verified ? ResponseEntity.ok("Email verified")
                         : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired OTP");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            LoginResponse response = userService.login(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 }
