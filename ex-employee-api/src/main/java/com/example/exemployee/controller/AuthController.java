@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.exemployee.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
-import com.example.demo.dto.SignupRequest;
-import com.example.demo.service.UserService;
+import com.example.exemployee.dto.LoginRequest;
+import com.example.exemployee.dto.LoginResponse;
+import com.example.exemployee.dto.SignupRequest;
+import com.example.exemployee.service.UserService;
 
 @RestController
 @RequestMapping("/auth")

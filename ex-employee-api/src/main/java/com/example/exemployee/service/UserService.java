@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.exemployee.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
-import com.example.demo.dto.SignupRequest;
-import com.example.demo.entity.UserEntity;
-import com.example.demo.repository.UserRepository;
+import com.example.exemployee.dto.LoginRequest;
+import com.example.exemployee.dto.LoginResponse;
+import com.example.exemployee.dto.SignupRequest;
+import com.example.exemployee.entity.UserEntity;
+import com.example.exemployee.repository.UserRepository;
 
 @Service
 public class UserService {

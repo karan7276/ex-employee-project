@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.exemployee.dto;
 
 public class LoginResponse {
     public String message;
