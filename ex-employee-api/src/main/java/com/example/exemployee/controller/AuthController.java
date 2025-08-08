@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.exemployee.dto.ApiResponse;
+import com.example.exemployee.dto.LoginApiResponse;
 import com.example.exemployee.dto.LoginRequest;
 import com.example.exemployee.dto.LoginResponse;
 import com.example.exemployee.dto.ResendOtpRequest;
@@ -43,12 +44,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            LoginResponse response = userService.login(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+    public ResponseEntity<LoginApiResponse> login(@RequestBody LoginRequest request) {
+        LoginApiResponse response = userService.login(request);
+        return ResponseEntity.ok(response);
     }
 }
