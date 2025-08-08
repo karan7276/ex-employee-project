@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.exemployee.dto.ApiResponse;
 import com.example.exemployee.dto.LoginRequest;
 import com.example.exemployee.dto.LoginResponse;
+import com.example.exemployee.dto.ResendOtpRequest;
 import com.example.exemployee.dto.SignupRequest;
 import com.example.exemployee.entity.UserEntity;
 import com.example.exemployee.repository.UserRepository;
@@ -22,7 +24,7 @@ public class UserService {
     @Autowired
     private OTPService otpService;
 
-    public void register(SignupRequest request) {
+    public ApiResponse register(SignupRequest request) {
         // Check if user already exists using findAllByEmail to handle duplicates
         List<UserEntity> existingUsers = userRepo.findAllByEmail(request.email);
         
@@ -31,11 +33,20 @@ public class UserService {
             boolean hasVerifiedUser = existingUsers.stream().anyMatch(UserEntity::isEmailVerified);
             
             if (hasVerifiedUser) {
-                throw new RuntimeException("User with this email already exists and is verified");
+                return new ApiResponse("USER_EXISTS", "User with this email already exists and is verified");
             }
             
             // If no verified user, update the first unverified user and clean up others
             UserEntity user = existingUsers.get(0);
+            
+            // Update user details with new signup data
+            user.setFirstName(request.firstName);
+            user.setLastName(request.lastName);
+            user.setPhoneNumber(request.phoneNumber);
+            user.setEmpIdArgano(request.empIdArgano);
+            user.setPassword(new BCryptPasswordEncoder().encode(request.password));
+            
+            // Generate and send new OTP
             String otp = otpService.generateOtp();
             user.setOtp(otp);
             user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
@@ -44,7 +55,7 @@ public class UserService {
             
             // Clean up other duplicates
             cleanupDuplicateUsers(request.email, user.getId());
-            return;
+            return new ApiResponse("SUCCESS", "Register successful. OTP sent to your email.");
         }
 
         // Create new user
@@ -63,14 +74,16 @@ public class UserService {
 
         userRepo.save(user);
         otpService.sendOtpEmail(request.email, otp);
+        
+        return new ApiResponse("SUCCESS", "Register successful. OTP sent to your email.");
     }
 
-    public boolean verifyOtp(String email, String otp) {
+    public ApiResponse verifyOtp(String email, String otp) {
         // Use findAllByEmail to handle duplicates gracefully
         List<UserEntity> users = userRepo.findAllByEmail(email);
         
         if (users.isEmpty()) {
-            return false;
+            return new ApiResponse("FAILED", "Unable to verify OTP. Please resend OTP.");
         }
         
         // Find user with matching OTP
@@ -82,11 +95,51 @@ public class UserService {
                 
                 // Clean up other duplicate unverified users
                 cleanupDuplicateUsers(email, user.getId());
-                return true;
+                return new ApiResponse("SUCCESS", "OTP Verified.");
             }
         }
         
-        return false;
+        return new ApiResponse("FAILED", "Unable to verify OTP. Please resend OTP.");
+    }
+    
+    public ApiResponse resendOtp(String email) {
+        // Find user by email
+        List<UserEntity> users = userRepo.findAllByEmail(email);
+        
+        if (users.isEmpty()) {
+            return new ApiResponse("FAILED", "User not found with this email address.");
+        }
+        
+        // Check if there's a verified user
+        UserEntity verifiedUser = users.stream()
+            .filter(UserEntity::isEmailVerified)
+            .findFirst()
+            .orElse(null);
+            
+        if (verifiedUser != null) {
+            return new ApiResponse("USER_VERIFIED", "User with this email is already verified.");
+        }
+        
+        // Find unverified user and send OTP
+        UserEntity user = users.stream()
+            .filter(u -> !u.isEmailVerified())
+            .findFirst()
+            .orElse(null);
+            
+        if (user == null) {
+            return new ApiResponse("FAILED", "User not found with this email address.");
+        }
+        
+        // Generate new OTP and update user
+        String otp = otpService.generateOtp();
+        user.setOtp(otp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
+        userRepo.save(user);
+        
+        // Send OTP email
+        otpService.sendOtpEmail(email, otp);
+        
+        return new ApiResponse("SUCCESS", "OTP sent successfully.");
     }
     
     private void cleanupDuplicateUsers(String email, String keepUserId) {

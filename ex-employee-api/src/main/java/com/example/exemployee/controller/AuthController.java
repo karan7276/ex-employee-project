@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.exemployee.dto.ApiResponse;
 import com.example.exemployee.dto.LoginRequest;
 import com.example.exemployee.dto.LoginResponse;
+import com.example.exemployee.dto.ResendOtpRequest;
 import com.example.exemployee.dto.SignupRequest;
+import com.example.exemployee.dto.VerifyOtpRequest;
 import com.example.exemployee.service.UserService;
 
 @RestController
@@ -22,16 +25,21 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
-        userService.register(request);
-        return ResponseEntity.ok("OTP sent to email");
+    public ResponseEntity<ApiResponse> signup(@RequestBody SignupRequest request) {
+        ApiResponse response = userService.register(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verifyOtp(@RequestParam String email, @RequestParam String otp) {
-        boolean verified = userService.verifyOtp(email, otp);
-        return verified ? ResponseEntity.ok("Email verified")
-                        : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired OTP");
+    public ResponseEntity<ApiResponse> verifyOtp(@RequestBody VerifyOtpRequest request) {
+        ApiResponse response = userService.verifyOtp(request.email, request.otp);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<ApiResponse> resendOtp(@RequestBody ResendOtpRequest request) {
+        ApiResponse response = userService.resendOtp(request.email);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
