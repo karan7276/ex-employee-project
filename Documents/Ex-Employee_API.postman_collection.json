@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\r\n    \"email\" : \"krn.sd7276@gmail.com\",\r\n    \"otp\" : \"265719\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/auth/verify?email=krn.sd8237@gmail.com&otp=348628",
+					"raw": "http://localhost:8080/auth/verify",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -34,11 +34,13 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "krn.sd8237@gmail.com"
+							"value": "krn.sd8237@gmail.com",
+							"disabled": true
 						},
 						{
 							"key": "otp",
-							"value": "348628"
+							"value": "793287",
+							"disabled": true
 						}
 					]
 				}
@@ -52,7 +54,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"firstName\": \"Karan\",\r\n    \"lastName\": \"Dasari\", \r\n    \"phoneNumber\": \"+91 1234567890\",\r\n    \"email\": \"krn.sd8237@gmail.com\",\r\n    \"empIdArgano\": \"EMP001\",\r\n    \"password\": \"test1234\"\r\n}",
+					"raw": "{\r\n    \"firstName\": \"Karan\",\r\n    \"lastName\": \"Dasari\", \r\n    \"phoneNumber\": \"+91 1234567890\",\r\n    \"email\": \"krn.sd7276@gmail.com\",\r\n    \"empIdArgano\": \"EMP002\",\r\n    \"password\": \"test1234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -103,6 +105,104 @@
 					"path": [
 						"auth",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "uploadDoc",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/KaranDasari/Downloads/Java 8 to Java 21 & Spring 2.docx"
+						},
+						{
+							"key": "uploadedBy",
+							"value": "krn.sd8237@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "JavaUpgrade",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/documents/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"documents",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetchDoc",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/documents/user/krn.sd8237@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"documents",
+						"user",
+						"krn.sd8237@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resendOTP",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"krn.sd7276@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/resend-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"resend-otp"
 					]
 				}
 			},
