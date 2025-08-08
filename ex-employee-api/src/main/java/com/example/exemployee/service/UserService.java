@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.exemployee.dto.ApiResponse;
+import com.example.exemployee.dto.LoginApiResponse;
 import com.example.exemployee.dto.LoginRequest;
 import com.example.exemployee.dto.LoginResponse;
 import com.example.exemployee.dto.ResendOtpRequest;
@@ -151,23 +152,27 @@ public class UserService {
         }
     }
     
-    public LoginResponse login(LoginRequest request) {
+    public LoginApiResponse login(LoginRequest request) {
         List<UserEntity> users = userRepo.findAllByEmail(request.email);
         
         if (users.isEmpty()) {
-            throw new RuntimeException("User not found");
+            return new LoginApiResponse("FAILED", "User not found with this email address.");
         }
         
         // Find verified user
         UserEntity user = users.stream()
             .filter(UserEntity::isEmailVerified)
             .findFirst()
-            .orElseThrow(() -> new RuntimeException("Email not verified. Please verify your email first."));
+            .orElse(null);
+            
+        if (user == null) {
+            return new LoginApiResponse("EMAIL_NOT_VERIFIED", "Email not verified. Please verify your email first.");
+        }
         
         // Check password
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (!encoder.matches(request.password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            return new LoginApiResponse("INVALID_CREDENTIALS", "Invalid email or password.");
         }
         
         // Generate simple token (you can replace with JWT later)
@@ -183,7 +188,7 @@ public class UserService {
             user.isEmailVerified()
         );
         
-        return new LoginResponse("Login successful", token, userInfo);
+        return new LoginApiResponse("SUCCESS", "Login successful.", token, userInfo);
     }
     
     private String generateSimpleToken(UserEntity user) {
